@@ -1,0 +1,29 @@
+{
+  "name": "orotrace3d",
+  "version": "1.0.0",
+  "description": "Visualisation web 3D d'un tracé GPX (trace néon animée, caméra dynamique, effet hiver), basé sur iTowns.",
+  "main": "src/main.js",
+  "scripts": {
+    "build-prod": "webpack --mode production --progress",
+    "build-dev": "webpack --mode development --progress",
+    "autobuild": "webpack --mode development --progress --watch"
+  },
+  "author": "Romane Rossignol (https://github.com/oromane)",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oromane/orotrace3d.git"
+  },
+  "dependencies": {
+    "@tweenjs/tween.js": "^18.6.4",
+    "bs-custom-file-input": "^1.3.4",
+    "buffer": "^6.0.3",
+    "itowns": "2.30.0",
+    "string_decoder": "^1.3.0",
+    "three": "0.124.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.23.0",
+    "webpack-cli": "^4.5.0"
+  }
+}

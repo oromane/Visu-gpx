@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OroTrace3D</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/index.css">
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <!-- ?v=2 casse le cache tenace du favicon (les navigateurs le cachent
+             par origine, un simple refresh ou même Cmd+Shift+R ne suffit pas) -->
+        <link rel="shortcut icon" href="./assets/logo.ico?v=2" type="image/x-icon">
+    </head>
+    <body>
+
+        <!-- MENU -->
+        <div class="mt-5" id="menuContainer">
+            <div id="menu">
+                <div class="d-flex justify-content-center mb-4" id="logoContainer">
+                    <img class="logo-menu" src="./assets/logo.png" alt="OroTrace3D logo">
+                    <h1>OroTrace3D</h1>
+                </div>
+                <div class="mb-5 text-center">
+                    <p><b>OroTrace3D</b> est un outil de visualisation web d'un parcours dans un environnement 3D à caméra dynamique, basé sur <a target="_blank" href="http://www.itowns-project.org/">iTowns</a>.</p>
+                    <p class="small"><a target="_blank" href="https://github.com/oromane">github.com/oromane</a></p>
+                </div>
+                <div class="mb-5">
+                    <label for="fileInput">Importer la trace GPX de votre parcours</label>
+                    <div class="custom-file">
+                        <input accept=".gpx" id="fileInput" type="file" class="custom-file-input"/>
+                        <label class="custom-file-label" for="fileInput" data-browse="Explorer">Choisir un fichier</label>
+                    </div>
+                </div>
+                <div class="mb-3 text-center" id="beginBtnConatiner">
+                    <button class="btn btn-primary" id="beginBtn" autofocus>Démarrer</button>
+                </div>
+                <div class="small text-center">
+                    <p>Si vous ne chosissez pas de fichier GPX, la visualisation démarrera avec le parcours par défaut, la <a target="_blank" href="https://www.wikiloc.com/hiking-trails/boucle-de-4-jours-en-haute-ariege-juillet-2020-52394056">boucle de 4 jours en Haute Ariège / Andorre</a> (53,9 km, D+ 3639 m).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ITOWNS MAP -->
+        <div id="viewerDiv"></div>
+
+        <!-- Cinematic overlay: vignette (CSS gradient) + film grain (canvas) -->
+        <div id="vignetteOverlay"></div>
+        <canvas id="grainCanvas"></canvas>
+
+        <!-- Video export controls -->
+        <div id="exportControls">
+            <button id="restartBtn" class="btn btn-secondary">↺ Recommencer</button>
+            <button id="recordBtn" class="btn btn-primary">● Enregistrer la vidéo</button>
+            <span id="recordStatus"></span>
+        </div>
+
+        <!-- Live playback/camera controls -->
+        <div id="liveControls">
+            <div class="liveControlRow">
+                <label for="speedSlider">Vitesse</label>
+                <input type="range" id="speedSlider" min="5" max="200" value="40" step="5">
+                <span id="speedValue" class="liveControlValue"></span>
+            </div>
+            <div class="liveControlRow">
+                <label for="tiltSlider">Angle caméra</label>
+                <input type="range" id="tiltSlider" min="5" max="80" value="27" step="1">
+                <span id="tiltValue" class="liveControlValue"></span>
+            </div>
+            <div class="liveControlRow">
+                <label for="heightSlider">Hauteur caméra</label>
+                <input type="range" id="heightSlider" min="500" max="20000" value="5000" step="250">
+                <span id="heightValue" class="liveControlValue"></span>
+            </div>
+            <div class="liveControlRow">
+                <label for="fixedCamCheckbox">Caméra fixe</label>
+                <input type="checkbox" id="fixedCamCheckbox" checked>
+                <span class="liveControlValue" style="width:auto;">navigation libre à la souris</span>
+            </div>
+            <div class="liveControlRow">
+                <label for="grainCheckbox">Grain de film</label>
+                <input type="checkbox" id="grainCheckbox">
+                <span class="liveControlValue" style="width:auto;">effet subtil</span>
+            </div>
+            <div class="liveControlRow">
+                <label for="winterCheckbox">Effet hiver</label>
+                <input type="checkbox" id="winterCheckbox">
+                <span class="liveControlValue" style="width:auto;">tons clairs → blanc</span>
+            </div>
+        </div>
+
+        <style>
+            #vignetteOverlay {
+                position: fixed; top:0; left:0; width:100%; height:100%;
+                pointer-events: none; z-index: 10;
+                background: radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%);
+            }
+            #grainCanvas {
+                position: fixed; top:0; left:0; width:100%; height:100%;
+                pointer-events: none; z-index: 11; opacity: 0.02; mix-blend-mode: overlay;
+                image-rendering: pixelated;
+            }
+            #exportControls {
+                position: fixed; top: 12px; right: 12px; z-index: 20;
+                display: flex; align-items: center; gap: 8px;
+            }
+            #recordStatus { color: #fff; text-shadow: 0 0 4px #000; font-size: 13px; }
+            #liveControls {
+                position: fixed; bottom: 16px; left: 16px; z-index: 20;
+                background: rgba(15,20,30,0.75); backdrop-filter: blur(6px);
+                border-radius: 10px; padding: 12px 16px; color: #fff;
+                font-size: 13px; min-width: 220px;
+            }
+            .liveControlRow {
+                display: flex; align-items: center; gap: 8px; margin: 6px 0;
+            }
+            .liveControlRow label { width: 90px; flex-shrink: 0; }
+            .liveControlRow input[type=range] { flex: 1; }
+            .liveControlValue { width: 42px; text-align: right; flex-shrink: 0; opacity: 0.85; }
+        </style>
+
+        <script src="dist/bundle.js"></script>
+    </body>
+</html>

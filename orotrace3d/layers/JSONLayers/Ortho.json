@@ -1,0 +1,17 @@
+{
+    "id": "Ortho",
+    "source": {
+        "url": "https://data.geopf.fr/wmts",
+        "crs": "EPSG:3857",
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "format": "image/jpeg",
+        "attribution": {
+            "name": "IGN",
+            "url": "http://www.ign.fr/"
+        },
+        "name": "ORTHOIMAGERY.ORTHOPHOTOS",
+        "tileMatrixSet": "PM"
+    }
+}

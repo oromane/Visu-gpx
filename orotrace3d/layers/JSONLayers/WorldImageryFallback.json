@@ -1,0 +1,21 @@
+{
+    "id":   "WorldImageryFallback",
+    "source": {
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}",
+        "crs": "EPSG:3857",
+        "format": "image/jpeg",
+        "isInverted": true,
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "attribution" : {
+            "name":"Esri World Imagery",
+            "url":"https://www.esri.com/"
+        },
+        "tileMatrixSet": "PM",
+        "zoom": {
+            "min": 0,
+            "max": 15
+        }
+    }
+}
