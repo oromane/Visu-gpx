@@ -63,12 +63,28 @@ if ! gh auth status >/dev/null 2>&1; then
   gh auth login --hostname github.com --git-protocol https --web
 fi
 
-# --- 5. Créer le repo et pusher ----------------------------------------------
-if git remote get-url origin >/dev/null 2>&1; then
-  git push -u origin main
-else
-  gh repo create "$REPO_NAME" --public --source=. --remote=origin --push
+# --- 5. Créer le repo (ou se rattacher au repo existant) et pusher -----------
+if ! git remote get-url origin >/dev/null 2>&1; then
+  if gh repo view "$REPO_NAME" --json url -q .url >/dev/null 2>&1; then
+    REPO_URL=$(gh repo view "$REPO_NAME" --json url -q .url)
+    echo "Le repo existe déjà sur GitHub → rattachement : $REPO_URL"
+    git remote add origin "$REPO_URL.git"
+  else
+    gh repo create "$REPO_NAME" --public --source=. --remote=origin
+  fi
 fi
+
+# Si le repo distant contient déjà un commit (ex: README créé sur GitHub),
+# on le fusionne dans l'historique local avant de pusher.
+git fetch origin
+if git ls-remote --exit-code --heads origin main >/dev/null 2>&1; then
+  if ! git merge-base --is-ancestor origin/main HEAD 2>/dev/null; then
+    git merge origin/main --allow-unrelated-histories --no-edit \
+      -m "Merge du README initial GitHub" || {
+      echo "Conflit de fusion inattendu — annulation propre."; git merge --abort; exit 1; }
+  fi
+fi
+git push -u origin main
 
 LOGIN=$(gh api user -q .login 2>/dev/null || echo "")
 echo ""
