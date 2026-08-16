@@ -33,6 +33,8 @@ git config user.email >/dev/null 2>&1 || git config user.email "$GIT_EMAIL"
 git add -A
 if git diff --cached --quiet 2>/dev/null && git rev-parse HEAD >/dev/null 2>&1; then
   echo "(aucun nouveau changement à committer)"
+elif git rev-parse HEAD >/dev/null 2>&1; then
+  git commit -m "Mise à jour du $(date '+%Y-%m-%d %H:%M')"
 else
   git commit -m "Initial commit: Visu GPX (OroTrace3D)"
 fi
